@@ -5,13 +5,14 @@ import com.app.simple.dto.SignupRequest;
 import com.app.simple.services.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/signup")
+@CrossOrigin(origins = "http://localhost:4200")
 public class SignupController {
 
     private final AuthService authService;
@@ -20,13 +21,18 @@ public class SignupController {
         this.authService = authService;
     }
 
-    @PostMapping()
-    public ResponseEntity<String> signupCustomer(@RequestBody SignupRequest signupRequest) {
+    @PostMapping
+    public ResponseEntity<Map<String, String>> signupCustomer(@RequestBody SignupRequest signupRequest) {
         boolean isUserCreated = authService.createCustomer(signupRequest);
+
+        Map<String, String> response = new HashMap<>();
         if (isUserCreated) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("Customer created Successfully!");
+            response.put("message", "Customer created Successfully!");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create customer!");
+            response.put("message", "Failed to create customer!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
 }
